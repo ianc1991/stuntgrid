@@ -19,22 +19,25 @@
 <div class="wrap">
   <p><a href="./">← StuntGrid</a></p>
   <h1>Privacy</h1>
-  <p class="muted">Last updated October 5, 2026 (feedback added)</p>
+  <p class="muted">Last updated October 7, 2026 (accounts added)</p>
 
   <p>StuntGrid is a racing game. You can play it entirely offline. If you use the online leaderboards, the game sends a few
     things to the StuntGrid server, described here. Nothing else is collected, and nothing is sold or shared for advertising.</p>
 
   <h2>What the leaderboards store</h2>
   <ul>
+    <li><b>Your email address</b>, if you sign in (you need to, to put laps on the leaderboards). It's used only to email you
+      sign-in codes: no newsletters, never shown to anyone, never shared or sold. A code is stored only in scrambled form and
+      stops working after 10 minutes.</li>
     <li><b>The name you choose</b> (3 to 16 characters). It's shown on the leaderboards. Don't use your real name if you'd
       rather not.</li>
     <li><b>Your laps</b>: when you set a best time on a built-in track, the game uploads the lap's ghost file: the track, the
       time, and the steering, throttle and brake inputs that drove it. The server re-drives the lap to check it. Verified laps
       are public: anyone can see the time and download the ghost to race against or watch.</li>
-    <li><b>A secret player key</b> that the game keeps on your device, so the server knows which laps are yours. The server
-      stores only a scrambled (hashed) form of it.</li>
+    <li><b>A secret key for each device you sign in on</b>, kept by the game, so the server knows which laps are yours. The
+      server stores only a scrambled (hashed) form of it. Signing out deletes that device's key.</li>
     <li><b>Your network address</b> is seen when you connect, as with any website. It's used only to stop abuse (limiting how
-      many players and laps one address can create in an hour) and isn't stored with your laps.</li>
+      many players, sign-in codes and laps one address can ask for in an hour) and isn't stored with your laps.</li>
   </ul>
 
   <h2>Turning it off</h2>
@@ -43,9 +46,10 @@
     menu opens, whether a newer build is out.</p>
 
   <h2>Deleting your data</h2>
-  <p>To have your player name and laps removed, ask in the <a href="https://discord.gg/htpj6hrKhU">StuntGrid Discord</a> or open
-    a request at <a href="https://github.com/ianc1991/stuntgrid/issues">github.com/ianc1991/stuntgrid/issues</a> with your
-    player name.</p>
+  <p>In the game, <b>Settings → Account → Delete my account</b> removes your email, name, device keys and laps from the server
+    straight away. Without the game, ask in the <a href="https://discord.gg/htpj6hrKhU">StuntGrid Discord</a> or open a request
+    at <a href="https://github.com/ianc1991/stuntgrid/issues">github.com/ianc1991/stuntgrid/issues</a> with your player name and
+    email.</p>
 
   <h2>Feedback</h2>
   <p>If you use <b>Send feedback</b> in the game, your text, the game's version, your device type (system, model, graphics
@@ -55,7 +59,8 @@
 
   <h2>Hosting</h2>
   <p>This website is hosted on GitHub Pages and the game downloads on GitHub; GitHub may log visits as described in its own
-    privacy statement. The leaderboard server runs on Railway.</p>
+    privacy statement. The leaderboard server runs on Railway. Sign-in emails are sent through Resend, which handles your email
+    address only to deliver them.</p>
 </div>
 </body>
 </html>
