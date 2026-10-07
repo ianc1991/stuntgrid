@@ -48,6 +48,11 @@
   .release time { color: var(--muted); font-size: 14px; }
   .release ul { margin: 8px 0 0; padding-left: 20px; }
   .release p { margin: 8px 0 0; }
+  .pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+  .pager button { font: inherit; color: inherit; background: var(--panel); border: 0; border-radius: var(--radius);
+    padding: 10px 16px; cursor: pointer; min-width: 110px; }
+  .pager button:disabled { opacity: 0.35; cursor: default; }
+  .pager span { color: var(--muted); font-size: 14px; }
   .note { color: var(--muted); font-size: 15px; }
   footer { padding: 48px 0 40px; color: var(--muted); font-size: 14px; text-align: center; }
   @media (max-width: 520px) { .btn { width: 100%; } }
@@ -75,7 +80,7 @@
     <h2>What it is</h2>
     <div class="features">
       <div class="feature"><b>Stunt tracks</b><p>Loops, wall rides, half-pipes, banked turns, big-air jumps and drops, all on one track if you like.</p></div>
-      <div class="feature"><b>Build your own</b><p>A track editor where pieces snap together on a grid, at three sizes. Test-drive your track as you build it.</p></div>
+      <div class="feature"><b>Build your own</b><p>A track editor where pieces snap together, or go anywhere you put them, at any size from half to four times. Place your own trees, rocks and grass, and test-drive your track as you build it.</p></div>
       <div class="feature"><b>Race your ghost</b><p>Your best lap drives beside you. Watch any lap again as a replay, or race someone else's from the leaderboard.</p></div>
       <div class="feature"><b>Verified times</b><p>Every lap on the online leaderboards is re-driven on the server from its inputs. A time only counts if the car really did it.</p></div>
     </div>
@@ -94,6 +99,9 @@
   <section>
     <h2>What's new</h2>
     <div id="releases"><p class="note">Loading the latest builds…</p></div>
+    <div class="pager" id="pager" hidden>
+      <button type="button" id="newer">← Newer</button><span id="page"></span><button type="button" id="older">Older →</button>
+    </div>
   </section>
 
   <section>
@@ -110,7 +118,7 @@
 </div>
 <script>
   // "What's new" and the version line come from the GitHub releases of this repo, newest first: a new build shows up here
-  // as soon as it's published.
+  // as soon as it's published. Every release is fetched once (one API call), then shown PER_PAGE at a time.
   const list = document.getElementById("releases");
   const version = document.getElementById("version");
   const escape = (s) => s.replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -126,14 +134,33 @@
     }
     return html + (inList ? "</ul>" : "");
   }
-  fetch("https://api.github.com/repos/ianc1991/stuntgrid/releases?per_page=6")
+  const PER_PAGE = 3;
+  const pager = document.getElementById("pager");
+  let all = [], page = 0;
+  function show() {
+    const pages = Math.ceil(all.length / PER_PAGE);
+    list.innerHTML = all.slice(page * PER_PAGE, (page + 1) * PER_PAGE).map((r) => `<div class="release"><h3>${escape(r.name || r.tag_name)}</h3>
+      <time>${new Date(r.published_at).toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"})}</time>
+      ${notes(r.body)}</div>`).join("");
+    pager.hidden = pages < 2;
+    document.getElementById("page").textContent = `Page ${page + 1} of ${pages}`;
+    document.getElementById("newer").disabled = page === 0;
+    document.getElementById("older").disabled = page >= pages - 1;
+  }
+  function turn(by) {
+    page += by;
+    show();
+    list.scrollIntoView({behavior: "smooth", block: "start"});
+  }
+  document.getElementById("newer").addEventListener("click", () => turn(-1));
+  document.getElementById("older").addEventListener("click", () => turn(1));
+  fetch("https://api.github.com/repos/ianc1991/stuntgrid/releases?per_page=100")
     .then((r) => r.ok ? r.json() : Promise.reject(r.status))
     .then((releases) => {
       if (!releases.length) { list.innerHTML = '<p class="note">The first beta build is on its way.</p>'; return; }
       version.textContent = `Latest: ${releases[0].name || releases[0].tag_name} · ${new Date(releases[0].published_at).toLocaleDateString()}`;
-      list.innerHTML = releases.map((r) => `<div class="release"><h3>${escape(r.name || r.tag_name)}</h3>
-        <time>${new Date(r.published_at).toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"})}</time>
-        ${notes(r.body)}</div>`).join("");
+      all = releases;
+      show();
     })
     .catch(() => { list.innerHTML = '<p class="note">See all builds on <a href="https://github.com/ianc1991/stuntgrid/releases">GitHub</a>.</p>'; });
 </script>
