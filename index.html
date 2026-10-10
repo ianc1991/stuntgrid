@@ -156,7 +156,8 @@
   document.getElementById("older").addEventListener("click", () => turn(1));
   fetch("https://api.github.com/repos/ianc1991/stuntgrid/releases?per_page=100")
     .then((r) => r.ok ? r.json() : Promise.reject(r.status))
-    .then((releases) => {
+    .then((everything) => {
+      const releases = everything.filter((r) => !r.prerelease && !r.draft);  // Plan 98: test builds are pre-releases, not for players
       if (!releases.length) { list.innerHTML = '<p class="note">The first beta build is on its way.</p>'; return; }
       version.textContent = `Latest: ${releases[0].name || releases[0].tag_name} · ${new Date(releases[0].published_at).toLocaleDateString()}`;
       all = releases;
